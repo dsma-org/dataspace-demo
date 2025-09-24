@@ -1,7 +1,6 @@
 # Dataspace Demo for Collaborative Research
 
-This repository provides supplementary material for the paper  
-*Dataspaces for Collaborative Research*.  
+This repository provides supplementary material for the paper *Dataspaces for Collaborative Research*.  
 It contains deployment instructions, use case material, and configuration examples that complement the work described in the publication.
 
 ---
