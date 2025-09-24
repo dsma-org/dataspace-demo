@@ -34,11 +34,11 @@ Please ensure this stack is available before attempting to use the provided inst
 - Use the code in **`endpoint-config/`** as a reference for customizing dataspace endpoints.
 - Explore the **`use-cases/`** folder for the supplementary material of the scenarios described in the paper.
   - **Dataset Finder Integration**  
-  The Dataset Finder is available at [Dataset Finder repository](https://github.com/.../dataset-finder).  
-  The integration connects the finder’s dataset catalog with dataspace-based exchange mechanisms.
+  The Dataset Finder is available at [Dataset Finder repository](https://github.com/dsma-org/dataset-finder).  
+  The integration connects the Dataset Finder with dataspace-based exchange mechanisms.
   > **TODO:** Provide step-by-step instructions for how the integration is configured and used here.
   - **Federated Process Mining**  
-  Explore the **`federated-process-mining/`** folder for the supplementary material of the federated process mining case study.  
+  In **`federated-process-mining/`**, find the material to reproduce the federated process mining case study.  
 
 
 This repository is intended as a reference for researchers and practitioners interested in deploying and experimenting with dataspaces in collaborative research contexts.
