@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Links/PIDs</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        p {
+            margin: 0; /* Remove margin for all <p> elements */
+        }
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: rgb(0, 84, 159);
+            color: #fff;
+        }
+        .card-body {
+            background-color: #fff;
+        }
+        .back-link {
+            margin-top: 20px;
+        }
+
+
+        .entry-container {
+            background-color: #e6e6e6; /*background color*/
+            border: 1px solid #e0e0e0; /*border color*/
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px; /*margin between entries*/
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .highlight-word {
+            background-color: rgba(255, 255, 0, 0.479);
+            padding: 0px 0px;
+            border-radius: 2px;
+            margin: 0 1px;
+            display: inline-block;
+        }
+
+        .contact-person {
+            margin-left: 20px; 
+        }
+        .project-description {
+            margin-left: 20px; 
+        }
+        .project-title {
+            margin-left: 20px; 
+        }
+        .dataset {
+            margin-left: 20px; /
+        }
+        .workstream {
+            margin-left: 20px; 
+        }
+        .search-result-item {
+            position: relative;
+        }
+
+        .created-updated {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 12px;
+            color: rgb(0, 0, 0);
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .title-container {
+            width: 70%;
+            max-width: 100%;
+        }
+
+        .read-more-content {
+            line-height: 1.2em;
+            max-height: 4.8em;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .show-more-link {
+            display: block;
+            margin-top: 1px;
+            color: rgb(0, 84, 159);
+            cursor: pointer;
+            /* text-decoration: underline; */
+        }  
+        .indented { 
+            display: block;
+            margin-left: 20px;
+        }
+        .reduce-spacing {
+            margin-bottom: 0.2em;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            z-index: 9999;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .popup.active {
+            display: block;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            color: #fff; 
+            font-size: 20px;
+            background-color: rgba(0, 0, 0, 0.5); 
+            padding: 5px; 
+            border-radius: 50%; 
+            z-index: 10000;
+            width: 20px; 
+            height: 20px; 
+            text-align: center;
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9998; 
+        }
+        .execute-button {
+            background-color: transparent;
+            border: 1px solid #4CAF50; 
+            color: #4CAF50;
+            padding: 0px 4px; 
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: inherit; 
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            float: right;
+        }
+
+        .execute-button:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .execute-button:focus {
+            outline: none;
+        }
+
+        .execute-button:active {
+            background-color: #45a049;
+            border-color: #45a049;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+                    <div class="card-header">
+                        <h2>Total Links/PIDs</h2>
+                    </div>
+                    
+                    {% for entry in result %}
+                    <div class="entry-container">
+                        <div class="list-group-item search-result-item">
+
+                            <p><strong>Project Title:</strong></p>
+                            <p class="project-title">
+                                {{ entry['Project title']|highlight_matching_words(entry['Searched word'])|safe }}
+                            </p>
+
+                            <p><strong>Project Description:</strong></p>
+                            <div class="project-description">
+                                <div id="read-more-content-{{ loop.index }}" class="read-more-content">
+                                    {{ entry['Project description']|highlight_matching_words(entry['Searched word'])|safe }}
+                                </div>
+                                <a href="#" id="show-more-link-{{ loop.index }}" class="show-more-link" style="display: none;">Show more</a>
+                            </div>
+
+
+                            <p><strong>Contact Persons:</strong>&nbsp;&nbsp;&nbsp; <button class="execute-button" onclick="executeFlaskFunction('{{ entry['RDMOtitle'] }}')"> Contact Project-Owner </button></p>    
+                            {% for contact_info in entry['Contact Info X'] %}
+                                <p class="contact-person">
+                                    {% if contact_info['Name'] == "Personal data is not disclosed." %}
+                                        {{ contact_info['Name']|highlight_matching_words(entry['Searched word'])|safe }}
+                                    {% else %}
+                                        {{ contact_info['Name']|highlight_matching_words(entry['Searched word'])|safe }},
+                                        {% if contact_info['Chair'] %}
+                                            Chair: {{ contact_info['Chair']|highlight_matching_words(entry['Searched word'])|safe }},
+                                        {% endif %}
+                                        {% if contact_info['Email'] %}
+                                            Email: <a href="mailto:{{ contact_info['Email'] }}">{{ contact_info['Email']|highlight_matching_words(entry['Searched word'])|safe }}</a>,
+                                        {% endif %}
+                                        {% if contact_info['ORCID'] %}
+                                            ORCID: <a href="https://orcid.org/{{ contact_info['ORCID'] }}" target="_blank">{{ contact_info['ORCID']|highlight_matching_words(entry['Searched word'])|safe }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                </p>
+                            {% endfor %}
+
+                            <p><strong>Workstreams:</strong></p>
+                            <p class="workstream">
+                                {% if entry['Workstreams']|length > 1 %}
+                                    {% if entry['Workstreams'][0]|list %}
+                                        <ul>
+                                            {% for Workstreams_item in entry['Workstreams'] %}
+                                                <li>{{ Workstreams_item|highlight_matching_words(entry['Searched word'])|safe }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <ul>
+                                            <li>{{ entry['Workstreams']|highlight_matching_words(entry['Searched word'])|safe }}</li>
+                                        </ul>
+                                    {% endif %}
+                                {% else %}
+                                    {% if entry['Workstreams'][0]|list %}
+                                        {{ entry['Workstreams'][0]|join(', ')|highlight_matching_words(entry['Searched word'])|safe }}
+                                    {% else %}
+                                        {{ entry['Workstreams'][0]|highlight_matching_words(entry['Searched word'])|safe }}
+                                    {% endif %}
+                                {% endif %}
+                            </p>
+
+                            <p><strong>Datasets:</strong></p>
+                            <div class="dataset">
+                                <ul>
+                                    {% for index in range(entry['Dataset']|length) %}
+                                    <li>
+                                        
+                                        <strong>Dataset:</strong> {{ entry['Dataset'][index] }}<br>
+
+                                        <p><strong>Dataset Description:</strong></p>
+                                            <p class="dataset-description">
+                                                <p id="dataset-description-content-{{ loop.index }}" class="read-more-content">
+                                                    {% set description = make_urls_clickable(entry['Dataset description'][index]) %}
+                                                    {% if description is iterable and not description is string %}
+                                                        {% for item in description %}
+                                                            {{ item | safe }}<br>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                        {{ description | safe }}
+                                                    {% endif %}
+                                                </p>
+                                                <a href="#" id="dataset-show-more-link-{{ loop.index }}" class="show-more-link" style="display: none;">Show more</a>
+                                            </p>
+
+
+                                            <p>
+                                            <strong>Link/PID:</strong>
+                                            {% for url in entry['pid'][index] %}
+                                                {% set display_name = get_display_name(url, use_image=True) %}
+                                                {% if 'img' in display_name %}
+                                                    <a href="{{ url }}" target="_blank">
+                                                        <img src="/static/coscine.png" alt="Coscine" style="filter: invert(1); height: 1em; width: auto; vertical-align: middle;">
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{{ url }}" target="_blank">{{ display_name | safe }}</a>
+                                                {% endif %}
+                                                {% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                            </p>
+
+                                            <p>
+                                            <strong>Keywords:</strong> {{entry['Keywords'][index]|join(', ')|highlight_matching_words(entry['Searched word'])|safe }}
+                                            </p>
+
+                                            <p class="popup-trigger">
+                                                <a href="#" class="more-data">Details</a>
+                                            </p>
+
+                                        </li>
+                                        <br>
+                                    {% endfor %} <!-- of datasets -->
+                                </ul>
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                    {% endfor %} <!-- of results -->
+
+    </div>
+
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var contents = document.querySelectorAll('.read-more-content');
+            var links = document.querySelectorAll('.show-more-link');
+    
+            contents.forEach(function(content, index) {
+                var fullHeight = content.scrollHeight;
+                var lineHeight = parseInt(window.getComputedStyle(content).lineHeight);
+    
+                if (fullHeight > (lineHeight * 4)) {
+                    var link = links[index];
+                    link.style.display = 'block';
+    
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if (content.style.maxHeight === 'none' || content.style.maxHeight === '') {
+                            content.style.maxHeight = fullHeight + 'px';
+                            this.textContent = 'Show less';
+                        } else {
+                            content.style.maxHeight = null;
+                            this.textContent = 'Show more';
+                        }
+                    });
+                }
+            });
+        });
+
+        function executeFlaskFunction(rdmoTitle) {
+            fetch('/execute_flask_function', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rdmoTitle: rdmoTitle })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Function executed successfully');
+                    window.location.href = '/contact_form';
+                } else {
+                    console.error('Error executing function');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const moreDataLinks = document.querySelectorAll('.more-data');
+            const overlay = document.getElementById('overlay');
+
+            moreDataLinks.forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const popup = this.parentNode.nextElementSibling;
+                    const popupContent = popup.outerHTML;
+                    const popupf = popup.innerHTML;
+
+                    // Instead of opening in a new tab, redirect the current window to /details
+                    window.location.href = '/details?content=' + encodeURIComponent(popupf);
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var datasetDescriptions = document.querySelectorAll('.dataset-description .read-more-content');
+            var showMoreLinks = document.querySelectorAll('.dataset-description .show-more-link');
+
+            datasetDescriptions.forEach(function (content, index) {
+                var fullHeight = content.scrollHeight;
+                var lineHeight = parseInt(window.getComputedStyle(content).lineHeight);
+
+                if (fullHeight > (lineHeight * 4)) {
+                    var link = showMoreLinks[index];
+                    link.style.display = 'block';
+
+                    link.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (content.style.maxHeight === 'none' || content.style.maxHeight === '') {
+                            content.style.maxHeight = fullHeight + 'px';
+                            this.textContent = 'Show less';
+                        } else {
+                            content.style.maxHeight = null;
+                            this.textContent = 'Show more';
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+
+
+</body>
+</html>

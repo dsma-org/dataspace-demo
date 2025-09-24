@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #333333;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 10px;
+            color: #555555;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        input[type="submit"],
+        .code-button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover,
+        .code-button:hover {
+            background-color: #0056b3;
+        }
+        .code-button {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form action="/login" method="post">
+            <button class="code-button" type="button" onclick="redirectToIoPPortal()">Login via IoP-Portal</button>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</body>
+<script>
+    function redirectToIoPPortal() {
+    window.location.href = 'https://iop-portal.rwth-aachen.de/o/oauth2/authorize?client_id=id-36fe9ea8-dfc5-4a85-e35c-a33ad9daea&response_type=code';
+    }
+</script>
+</html>

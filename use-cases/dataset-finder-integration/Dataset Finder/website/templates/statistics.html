@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+    
+        h1 {
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            color: #3498db;
+        }
+    
+        .project-entry {
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    
+        .project-entry p {
+            margin: 10px 0;
+        }
+    
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+    
+        .image-container img {
+            flex: 1 1 calc(33.33% - 20px); /* 3 images per row + margin */
+            max-width: calc(33.33% - 20px);
+            height: auto;
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+    
+        .image-container img:hover {
+            transform: scale(1.5);
+        }
+    
+        #party-mode-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+    
+        #party-mode-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+    <script>
+        let partyModeActive = false;
+
+        function togglePartyMode() {
+            const body = document.querySelector('body');
+            partyModeActive = !partyModeActive;
+
+            if (partyModeActive) {
+                startPartyMode(body);
+            } else {
+                stopPartyMode(body);
+            }
+        }
+
+        function startPartyMode(element) {
+            let intervalId;
+            let originalBackgroundColor = window.getComputedStyle(element).backgroundColor;
+
+            // rotating the page
+            let rotationAngle = 0;
+            intervalId = setInterval(() => {
+                element.style.transform = `rotate(${rotationAngle}deg)`;
+                rotationAngle += 5; // change the rotation speed
+            }, 50);
+
+            let backgroundColorInterval = setInterval(() => {
+                element.style.backgroundColor = getRandomColor();
+            }, 100);
+
+            let textColorInterval = setInterval(() => {
+                element.style.color = getRandomColor();
+            }, 500); 
+
+            setTimeout(() => {
+                // stop and reset styles
+                clearInterval(intervalId);
+                clearInterval(backgroundColorInterval);
+                clearInterval(textColorInterval);
+                element.style.transform = '';
+                element.style.backgroundColor = originalBackgroundColor;
+                element.style.color = '';
+            }, 7000); // duration
+        }
+
+        function stopPartyMode(element) {
+            element.style.backgroundColor = ''; 
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
+</head>
+<body>
+
+    <h1>Misassigned Projects</h1>
+    {% for entry in entries %}
+        <div class="project-entry">
+            <p><strong>Title:</strong> {{ entry.title }}</p>
+            <p><strong>Description:</strong> {{ entry.description }}</p>
+            <p><strong>Catalog URI:</strong> <a href="{{ entry.catalog_uri }}" target="_blank">{{ entry.catalog_uri }}</a></p>
+            <p><strong>Owners:</strong> {% for owner in entry.owners %}{{ owner.first_name }} {{ owner.last_name }} ({{ owner.email }}){% if not loop.last %}, {% endif %}{% endfor %}</p>
+        </div>
+    {% endfor %}
+
+    <h1>Charts</h1>
+    <div class="image-container">
+        {% for image_path in image_paths %}
+            <img src="{{ image_path }}" alt="Chart Image">
+        {% endfor %}
+    </div>
+
+    <button id="party-mode-btn" onclick="togglePartyMode()">Party!</button>
+</body>
+</html>
