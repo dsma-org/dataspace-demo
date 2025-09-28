@@ -36,7 +36,21 @@ Please ensure this stack is available before attempting to use the provided inst
   - **Dataset Finder Integration**  
   The Dataset Finder is available at [Dataset Finder repository](https://github.com/dsma-org/dataset-finder).  
   The integration connects the Dataset Finder with dataspace-based exchange mechanisms.
-  > **TODO:** Provide step-by-step instructions for how the integration is configured and used here.
+  To be able to reference a specific offer in the connector, we modified the [drkultur-edc-ui](https://github.com/Fraunhofer-FIT-DSAI/drkultur-edc-ui) to take a search string as a url parameter. This required modifying the following function to the [catalog-browser-page component](https://github.com/Fraunhofer-FIT-DSAI/drkultur-edc-ui) as follows:
+```typescript
+  ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      const assetID = params['asset'];
+      this.searchText.setValue(assetID)
+    });
+    ...
+  }
+```
+
+
+  
+
+
   - **Federated Process Mining**  
   In **`federated-process-mining/`**, find the material to reproduce the federated process mining case study.  
 
